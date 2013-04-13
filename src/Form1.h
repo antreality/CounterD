@@ -11,6 +11,7 @@ namespace CounterD
   using namespace System::Data;
   using namespace System::Drawing;
   using namespace System::Media;
+  using namespace System::Threading;
 
   /// <summary>
   /// Summary for Form1
@@ -63,7 +64,7 @@ namespace CounterD
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    Int32 i32TotalTime, i32Hour, i32Min, i32Sec;
+    UInt32 u32TotalTime, u32Hour, u32Min, u32Sec;
     Boolean bCountDown;
     Boolean bHourlySound;
     System::String^ TimeFormatStr;
@@ -143,8 +144,9 @@ namespace CounterD
 		this->textSec->Name = L"textSec";
 		this->textSec->Size = System::Drawing::Size(38, 26);
 		this->textSec->TabIndex = 3;
-		this->textSec->Text = L"05";
+      this->textSec->Text = L"10";
 		this->textSec->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+      //this->textSec->TextChanged += gcnew System::EventHandler(this, &Form1::textSec_TextChanged);
 		// 
 		// buttonStart
 		// 
@@ -303,7 +305,6 @@ namespace CounterD
 #pragma endregion
   private:
     System::Void EnableComponents(System::Boolean bTaskStart);
-    System::Void DoReminder(int nTime);
   private:
     System::Void timerTask1_Tick(System::Object^  sender, System::EventArgs^  e);
   private:
@@ -313,7 +314,7 @@ namespace CounterD
     {
       this->textHour->Text = L"00";
       this->textMin->Text = L"00";
-      this->textSec->Text = L"05";
+      this->textSec->Text = L"10";
     }
   private:
     System::Void buttonStop_Click(System::Object^  sender, System::EventArgs^  e)
@@ -324,14 +325,18 @@ namespace CounterD
   private: 
     System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) 
     {
-      DoReminder(1);
+      RunSoundThread(1);
     }
 
   private:
-    System::Void backgroundWorker_DoWork( Object^ sender, DoWorkEventArgs^ e )
+    static void DoReminder(System::Object ^oData);
+    void RunSoundThread(int nTime)
     {
-      DoReminder(5);
+      Thread^ newThread = gcnew
+                Thread(gcnew ParameterizedThreadStart(Form1::DoReminder));
+      newThread->Start(nTime);
     }
   };
 }
+
 
