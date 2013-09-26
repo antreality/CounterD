@@ -8,6 +8,8 @@ Form1::Form1()
   InitializeComponent();
   TimeFormatStr = "dd-MMM-yyyy hh:mm:ss";
   bHourlySound = true; // temporarily set to true before adding option setting dlg
+  bMidTimeSound = true; // true for now. TODO: configurable through UI.
+  u32MidTime = 0;
 
   this->Text = "CountD: " + System::DateTime::Now.ToString("dd-MMM-yyyy hh:mm:ss tt");
   System::String^ timeStr = System::DateTime::Now.ToString(TimeFormatStr);
@@ -70,6 +72,13 @@ System::Void Form1::timerTask1_Tick(System::Object^  sender, System::EventArgs^ 
     RunSoundThread(3);
     return;
   }
+
+  // Mid Time up check
+  if (bMidTimeSound && u32MidTime && u32TotalTime == u32MidTime)
+  {
+    RunSoundThread(1); //DoReminder(1);
+    u32MidTime = 0; // reset
+  }
   //this->Text = L"Count Down Timer " + u32TotalTime.ToString();
 
   if (0 == u32Sec)
@@ -109,6 +118,10 @@ System::Void Form1::buttonStart_Click(System::Object^  sender, System::EventArgs
     u32Min = UInt32::Parse(this->textMin->Text);
     u32Sec = UInt32::Parse(this->textSec->Text);
     u32TotalTime = u32Hour * 3600 + u32Min * 60 + u32Sec;
+    if (u32TotalTime >= 2)
+    {
+      u32MidTime = u32TotalTime / 2; // Integer division
+    }
     if (u32TotalTime != 0) // do nothing
     {
   this->EnableComponents(true);
