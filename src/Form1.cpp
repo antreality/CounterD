@@ -65,22 +65,25 @@ System::Void Form1::timerTask1_Tick(System::Object^  sender, System::EventArgs^ 
   // Count Down Function
   if (!bCountDown) return;
   u32TotalTime--;
+
+  // Final time up check
   if (u32TotalTime == 0)
   {
     this->textSec->Text = L"00";
     this->EnableComponents(false);
-    RunSoundThread(3);
+    RunSoundThread(3); // final time up
     return;
   }
 
   // Mid Time up check
   if (bMidTimeSound && u32MidTime && u32TotalTime == u32MidTime)
   {
-    RunSoundThread(1); //DoReminder(1);
+    RunSoundThread(1);
     u32MidTime = 0; // reset
   }
   //this->Text = L"Count Down Timer " + u32TotalTime.ToString();
 
+  // display of remaining hour, min and sec
   if (0 == u32Sec)
   {
     u32Sec = 59;
@@ -124,9 +127,9 @@ System::Void Form1::buttonStart_Click(System::Object^  sender, System::EventArgs
     }
     if (u32TotalTime != 0) // do nothing
     {
-  this->EnableComponents(true);
-  DoReminder(1);
-}
+      this->EnableComponents(true);
+      RunSoundThread(1);
+    }
   }
   catch(...)
   {
