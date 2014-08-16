@@ -13,6 +13,8 @@ namespace CounterD
   using namespace System::Media;
   using namespace System::Threading;
 
+  const UInt32 SEC_IN_TENMIN = 600;
+
   /// <summary>
   /// Summary for Form1
   ///
@@ -67,8 +69,13 @@ namespace CounterD
     UInt32 u32TotalTime, u32Hour, u32Min, u32Sec;
     Boolean bCountDown;
     Boolean bHourlySound;
+
     Boolean bMidTimeSound;
     UInt32 u32MidTime;
+
+    Boolean bTenMinSound;
+    UInt32 u32TenMinPoint;
+
     System::String^ TimeFormatStr;
   private:
     System::Windows::Forms::Label^  label1;

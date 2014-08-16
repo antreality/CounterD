@@ -7,9 +7,12 @@ Form1::Form1()
 {
   InitializeComponent();
   TimeFormatStr = "dd-MMM-yyyy hh:mm:ss";
-  bHourlySound = true; // temporarily set to true before adding option setting dlg
+  bHourlySound = true;  // true for now. TODO: configurable through UI.
   bMidTimeSound = true; // true for now. TODO: configurable through UI.
   u32MidTime = 0;
+
+  bTenMinSound = true; // true for now. TODO: configurable through UI.
+  u32TenMinPoint = 0;
 
   this->Text = "CountD: " + System::DateTime::Now.ToString("dd-MMM-yyyy hh:mm:ss tt");
   System::String^ timeStr = System::DateTime::Now.ToString(TimeFormatStr);
@@ -75,8 +78,12 @@ System::Void Form1::timerTask1_Tick(System::Object^  sender, System::EventArgs^ 
     return;
   }
 
-  // Mid Time up check
-  if (bMidTimeSound && u32MidTime && u32TotalTime == u32MidTime)
+  if (bTenMinSound && u32TotalTime == u32TenMinPoint) // frame for 10-min interval sound
+  {
+    RunSoundThread(1);
+    if (u32TenMinPoint > SEC_IN_TENMIN) u32TenMinPoint -= SEC_IN_TENMIN;
+  }
+  else if (bMidTimeSound && u32MidTime && u32TotalTime == u32MidTime) // Mid Time up check
   {
     RunSoundThread(1);
     u32MidTime = 0; // reset
@@ -124,6 +131,10 @@ System::Void Form1::buttonStart_Click(System::Object^  sender, System::EventArgs
     if (u32TotalTime >= 2)
     {
       u32MidTime = u32TotalTime / 2; // Integer division
+      if (u32TotalTime > SEC_IN_TENMIN)
+      {
+        u32TenMinPoint = u32TotalTime - SEC_IN_TENMIN;
+      }
     }
     if (u32TotalTime != 0) // do nothing
     {
